@@ -1,0 +1,26 @@
+services:
+  android:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sms-mirror-build:latest
+    platform: linux/amd64
+    working_dir: /workspace
+    volumes:
+      # The project itself — build outputs land back on the host under app/build/.
+      - .:/workspace
+      # Dependency cache in a named volume so rebuilds don't re-download the world.
+      - gradle-cache:/gradle-cache
+    environment:
+      GRADLE_USER_HOME: /gradle-cache
+      # Point Gradle at the SDK baked into the image, so no local.properties is needed.
+      ANDROID_SDK_ROOT: /opt/android-sdk
+      ANDROID_HOME: /opt/android-sdk
+      # Gradle's native file watcher can't poll a bind mount from inside the container
+      # and throws on every build. Set here rather than in gradle.properties so host
+      # Android Studio builds keep the watcher.
+      GRADLE_OPTS: -Dorg.gradle.vfs.watch=false
+    tty: true
+
+volumes:
+  gradle-cache:

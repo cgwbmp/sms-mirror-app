@@ -1,0 +1,84 @@
+name: Bug report
+description: Something doesn't work — a message wasn't forwarded, the app crashed, setup failed
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting.
+
+        **Issues are public.** Please leave out message bodies (especially one-time
+        codes), your email address, app passwords, and full phone numbers — mask them
+        like `+1555…4567`. We never need any of those to fix a bug.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+      placeholder: I sent myself a text with a code in it and no email arrived.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: If you know how to trigger it. "Happens sometimes, maybe once a day" is a valid answer.
+      placeholder: |
+        1. Turn forwarding on
+        2. Receive a text from a short-code sender
+        3. Nothing arrives; Home shows it under Needs attention
+    validations:
+      required: false
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Shown at the bottom of the Setup screen.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Phone and Android version
+      description: Background behaviour differs a lot between manufacturers, so the model matters.
+      placeholder: "Pixel 6, Android 15"
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: Email provider
+      description: The provider only — not your address.
+      placeholder: "Gmail"
+    validations:
+      required: false
+  - type: dropdown
+    id: test-email
+    attributes:
+      label: Does "Save and send test email" in Setup still work?
+      description: This separates a mail-provider problem from an app problem.
+      options:
+        - "Yes, the test email arrives"
+        - "No, the test email fails"
+        - "Haven't tried"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines
+      description: |
+        Optional. `./dev.sh logs`, or `adb logcat -s SmsReceiver:V ForwardWorker:V`.
+        Paste only the lines that matter, and read them first — logs can contain
+        message text and phone numbers.
+      render: text
+    validations:
+      required: false
+  - type: checkboxes
+    id: redacted
+    attributes:
+      label: Before submitting
+      options:
+        - label: I've checked this report contains no message contents, passwords, or full phone numbers.
+          required: true

@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest something the app should do
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the situation you're in, not only the feature — the underlying need
+        often has a simpler answer than the one that comes to mind first.
+
+        A few things are deliberately out of scope: stored message history, a backend or
+        third-party email API, and Play Store distribution. Already planned, so no need
+        to file: OAuth2 sign-in, encrypted message bodies, delivery channels other than
+        email. See
+        [CONTRIBUTING.md](https://github.com/cgwbmp/sms-mirror-app/blob/main/CONTRIBUTING.md#suggesting-a-feature).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation, and what makes it awkward today.
+      placeholder: I get codes from two different banks and only want one of them forwarded while travelling.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like the app to do?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Anything you've tried instead?
+      description: Existing rules, a workaround, another app.
+    validations:
+      required: false

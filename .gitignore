@@ -1,0 +1,17 @@
+*.iml
+.gradle/
+build/
+local.properties
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+# ...except the published release build, which is what people sideload.
+!dist/*.apk
+*.keystore
+# Signing keys and their passwords never go in git.
+# Debug key: regenerate with ./dev.sh setup. Release key: see DOCS.md → Releasing.
+.keystore/
+keystore.properties

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kept in sync with ui/theme/Color.kt -->
+    <color name="surface">#F5F8F6</color>
+    <color name="signal_green">#12A55F</color>
+    <color name="ink">#0F1613</color>
+</resources>

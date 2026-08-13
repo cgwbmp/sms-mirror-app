@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The "forward" arrow: a message being passed onward, which is the whole job.
+
+  Drawn directly in the 108x108 adaptive-icon viewport rather than scaled by a <group>,
+  so the geometry is explicit. Sized to stay inside the 66dp circle that every launcher
+  mask is guaranteed to show — the tail's bottom-left tip is the limiting point.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#2ED47F"
+        android:pathData="M54,44.8 L54,35.6 L72.4,54 L54,72.4 L54,63 C42.5,63 34.5,66.7 28.7,74.7 C31,63.2 37.9,51.7 54,49.4 Z" />
+</vector>

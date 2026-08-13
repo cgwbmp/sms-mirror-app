@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question about setup or providers
+    url: https://github.com/cgwbmp/sms-mirror-app/issues/new
+    about: Open a blank issue — setup questions are welcome, and the answers end up in the docs.
+  - name: Security problem
+    url: https://github.com/cgwbmp/sms-mirror-app/security/advisories/new
+    about: Report privately instead of in a public issue.
