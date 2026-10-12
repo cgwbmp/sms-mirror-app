@@ -1,14 +1,8 @@
 package com.example.smsmirror.ui
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.os.PowerManager
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -35,9 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -67,32 +59,25 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
 
-    // Recomposition trigger: permission state lives outside Compose, so bump a counter
-    // when the system dialog returns to force a re-read.
-    var permissionEpoch by remember { mutableIntStateOf(0) }
-    val smsGranted = remember(permissionEpoch) {
+    // Permission state lives outside Compose; re-read it whenever the user comes back
+    // from system settings.
+    val resumeEpoch = rememberResumeEpoch()
+    val smsGranted = remember(resumeEpoch) {
         ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) ==
             PackageManager.PERMISSION_GRANTED
     }
+    // Optional for forwarding itself, but asked for alongside SMS: it's what lets the
+    // email say which SIM received the message.
+    val phoneGranted = remember(resumeEpoch) {
+        ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) ==
+            PackageManager.PERMISSION_GRANTED
+    }
     // Only a runtime permission from Android 13; below that there is nothing to ask for.
-    val notificationsGranted = remember(permissionEpoch) {
+    val notificationsGranted = remember(resumeEpoch) {
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
             PackageManager.PERMISSION_GRANTED
     }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissionEpoch++ }
-
-    // Doze exemption is granted in a system dialog, so it's re-read the same way.
-    val batteryExempt = remember(permissionEpoch) {
-        context.getSystemService(PowerManager::class.java)
-            ?.isIgnoringBatteryOptimizations(context.packageName) ?: true
-    }
-    val batteryLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { permissionEpoch++ }
 
     Column(
         modifier = modifier
@@ -108,21 +93,19 @@ fun HomeScreen(
 
         // Inline, dismissible-feeling prompts instead of system dialogs appearing from
         // nowhere — the user sees why before they're asked.
-        AnimatedVisibility(visible = !smsGranted) {
+        AnimatedVisibility(visible = !smsGranted || !phoneGranted) {
             ActionCard(
-                title = "Allow SMS access",
-                body = "Mirror needs permission to see incoming messages. It never reads your " +
-                    "existing conversations.",
-                actionLabel = "Grant permission",
-                onAction = {
-                    permissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.RECEIVE_SMS,
-                            Manifest.permission.READ_PHONE_STATE,
-                            Manifest.permission.READ_PHONE_NUMBERS,
-                        )
-                    )
+                title = if (smsGranted) "Allow Phone access" else "Allow SMS access",
+                body = if (smsGranted) {
+                    "Lets the forwarded email say which SIM received the message. In App " +
+                        "info, open Permissions and allow Phone."
+                } else {
+                    "Mirror needs permission to see incoming messages. It never reads your " +
+                        "existing conversations. In App info, open Permissions and allow SMS " +
+                        "and Phone. If SMS is greyed out, first tap ⋮ › Allow restricted settings."
                 },
+                actionLabel = "Open settings",
+                onAction = { openAppSettings(context) },
             )
         }
 
@@ -135,39 +118,14 @@ fun HomeScreen(
             )
         }
 
-        AnimatedVisibility(visible = settings.isConfigured && smsGranted && !batteryExempt) {
-            ActionCard(
-                title = "Allow background sending",
-                body = "Android may hold back forwarding while the phone is idle. Exempting " +
-                    "Mirror keeps codes arriving while they're still valid.",
-                actionLabel = "Allow",
-                onAction = {
-                    // The direct dialog needs REQUEST_IGNORE_BATTERY_OPTIMIZATIONS; if a
-                    // build or OEM blocks it, fall back to the settings list.
-                    val direct = Intent(
-                        Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                        Uri.fromParts("package", context.packageName, null),
-                    )
-                    val intent = if (direct.resolveActivity(context.packageManager) != null) {
-                        direct
-                    } else {
-                        Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                    }
-                    batteryLauncher.launch(intent)
-                },
-            )
-        }
-
         // Not shown when the user has switched failure notifications off — prompting for a
         // permission they've declined the purpose of is just nagging.
         AnimatedVisibility(visible = smsGranted && settings.notifyOnFailure && !notificationsGranted) {
             ActionCard(
                 title = "Turn on notifications",
                 body = "So you find out if a message fails to send.",
-                actionLabel = "Allow",
-                onAction = {
-                    permissionLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
-                },
+                actionLabel = "Open settings",
+                onAction = { openNotificationSettings(context) },
             )
         }
 

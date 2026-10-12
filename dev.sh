@@ -9,6 +9,9 @@ APK=app/build/outputs/apk/debug/app-debug.apk
 RELEASE_APK=app/build/outputs/apk/release/app-release.apk
 APKSIGNER=/opt/android-sdk/build-tools/35.0.0/apksigner
 
+# adb from PATH, else the Android Studio SDK's copy.
+ADB=$(command -v adb || echo "${ANDROID_HOME:-$HOME/Library/Android/sdk}/platform-tools/adb")
+
 in_container() { docker compose run --rm android "$@"; }
 
 # versionName, read from the one place it is declared.
@@ -97,10 +100,10 @@ EOF
     # adb runs on the host: Docker Desktop on macOS can't reach USB devices or the
     # emulator, so the container builds and the host installs.
     [ -f "$APK" ] || { echo "No APK yet — run ./dev.sh build" >&2; exit 1; }
-    adb install -r "$APK"
+    "$ADB" install -r "$APK"
     ;;
-  logs)    adb logcat -s SmsReceiver:V ForwardWorker:V WM-WorkerWrapper:I ;;
-  sms)     adb emu sms send "${2:-+15551234567}" "${3:-Your code is 123456}" ;;
+  logs)    "$ADB" logcat -s SmsReceiver:V ForwardWorker:V WM-WorkerWrapper:I ;;
+  sms)     "$ADB" emu sms send "${2:-+15551234567}" "${3:-Your code is 123456}" ;;
 
   *)
     cat <<'USAGE'

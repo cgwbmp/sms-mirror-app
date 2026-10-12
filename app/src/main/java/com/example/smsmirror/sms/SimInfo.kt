@@ -14,15 +14,26 @@ import android.telephony.SubscriptionManager
  */
 object SimInfo {
 
-    @SuppressLint("MissingPermission") // guarded by the SecurityException catch below
+    /**
+     * Runs inside the SMS broadcast, so it must never throw: some OEM builds raise more
+     * than SecurityException without the Phone permission, and an escaping exception
+     * would drop the message. Missing details just make the forward say less.
+     */
+    @SuppressLint("MissingPermission") // guarded by the catch-all below
     fun describe(context: Context, subscriptionId: Int): String {
-        val manager = context.getSystemService(SubscriptionManager::class.java)
-            ?: return UNKNOWN
         return try {
+            val manager = context.getSystemService(SubscriptionManager::class.java)
+                ?: return UNKNOWN
             val info = manager.getActiveSubscriptionInfo(subscriptionId) ?: return UNKNOWN
-            phoneNumber(manager, info, subscriptionId) ?: slotLabel(info)
-        } catch (e: SecurityException) {
-            // READ_PHONE_STATE not granted — not fatal, the forward just says less.
+            // The number needs READ_PHONE_NUMBERS on top of READ_PHONE_STATE; without it
+            // the slot/carrier label is still worth showing.
+            val number = try {
+                phoneNumber(manager, info, subscriptionId)
+            } catch (e: Exception) {
+                null
+            }
+            number ?: slotLabel(info)
+        } catch (e: Exception) {
             UNKNOWN
         }
     }

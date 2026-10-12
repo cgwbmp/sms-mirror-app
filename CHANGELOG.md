@@ -9,6 +9,23 @@ alongside each release.
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-10-12 (versionCode 2)
+
+### Fixed
+- Granting permissions from Home no longer crashes on Android 17: the SMS and
+  notification prompts now open the system settings page instead of the runtime dialog.
+- Without the Phone permission, some phones could drop an incoming message while looking
+  up which SIM received it. That lookup can no longer fail a forward; the email falls back
+  to the SIM slot and carrier, or "this device".
+
+### Changed
+- Home keeps prompting until both SMS and Phone are allowed, so the email can name the
+  receiving SIM.
+
+### Removed
+- The "Allow background sending" (Doze exemption) prompt and the
+  `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission; forwarding works without it.
+
 ## [1.0.0] — 2026-08-13 (versionCode 1)
 
 First release. Verified on a Pixel 6 (Android 17, API 37); 21 unit tests pass.

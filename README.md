@@ -7,7 +7,7 @@ Keep an Android phone in a drawer for your bank's verification codes? Carry two 
 Switched to an iPhone but left a number behind on the old one? SMS Mirror sends those
 texts to your own email inbox, the moment they arrive.
 
-[**Download the app (v1.0.0)**](https://github.com/cgwbmp/sms-mirror-app/raw/main/dist/sms-mirror-1.0.0.apk) · Android 8 or newer · 12 MB
+[**Download the app (v1.0.1)**](https://github.com/cgwbmp/sms-mirror-app/raw/main/dist/sms-mirror-1.0.1.apk) · Android 8 or newer · 12 MB
 
 ---
 
@@ -79,7 +79,7 @@ whatever. If the message says the app was *blocked* or *scanned* and offers only
 Protect won't budge, install over USB from a computer instead:
 
 ```sh
-adb install sms-mirror-1.0.0.apk
+adb install sms-mirror-1.0.1.apk
 ```
 
 That needs *Developer options* → *USB debugging* on the phone, and Android's `adb` tool
@@ -108,10 +108,9 @@ working setup alone. That's deliberate.
   with no explanation won't trip it — add a sender rule for that service instead.
 
 **Emails come, but late — or dry up when the phone sits idle.** Android is putting the
-app to sleep. Home shows a *battery* prompt when this is the likely cause; tap through it
-and exempt the app. Some phones need more: Samsung, Xiaomi, OnePlus and Huawei run
-their own battery managers on top of Android's, so also find SMS Mirror in your phone's
-battery settings and set it to *Unrestricted* (or remove it from any "sleeping apps" list).
+app to sleep. Open SMS Mirror's App info › Battery and set it to *Unrestricted*. Samsung,
+Xiaomi, OnePlus and Huawei also run their own battery managers on top of Android's, so
+remove the app from any "sleeping apps" list there too.
 
 **Nothing forwards after a restart until I unlock the phone.** Expected. Android keeps
 storage encrypted until the first unlock after boot, and the app can't read your saved

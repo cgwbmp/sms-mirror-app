@@ -17,8 +17,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Visibility
@@ -36,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -278,17 +275,14 @@ fun SetupScreen(
         }
 
         SectionCard(title = "Notifications") {
-            // Re-read after the system dialog returns; permission state lives outside
+            // Re-read on returning from system settings; permission state lives outside
             // Compose so it needs a nudge to recompose.
-            var permissionEpoch by remember { mutableIntStateOf(0) }
-            val granted = remember(permissionEpoch) {
+            val resumeEpoch = rememberResumeEpoch()
+            val granted = remember(resumeEpoch) {
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                     ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
                     PackageManager.PERMISSION_GRANTED
             }
-            val permissionLauncher = rememberLauncherForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { permissionEpoch++ }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f)) {
@@ -321,7 +315,7 @@ fun SetupScreen(
                         // Asking only when switched on keeps the prompt tied to an action
                         // the user just took, rather than appearing unprompted.
                         if (enabled && !granted) {
-                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            openNotificationSettings(context)
                         }
                     },
                 )

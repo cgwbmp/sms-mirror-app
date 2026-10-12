@@ -12,10 +12,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- Lets the app ask, in one dialog, to be exempt from Doze so a forward isn't
-         deferred until the phone next wakes — which for an OTP is the same as failing.
-         Play restricts this; irrelevant for a sideloaded personal build. -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name=".SmsMirrorApp"

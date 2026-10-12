@@ -17,7 +17,7 @@ Everything beyond "install it and use it". For the short version see the
 
 ## Status
 
-**v1.0.0** — verified on a Pixel 6 (Android 17, API 37): an incoming SMS arrives as
+**v1.0.1** — fixes permission prompts on Android 17. v1.0.0 was verified on a Pixel 6 (Android 17, API 37): an incoming SMS arrives as
 email, the outbox row is deleted on success, and only the counter persists. Rules add,
 list and delete against a live Room v2 migration. 21 unit tests pass.
 
@@ -35,7 +35,7 @@ Working:
   editable for a known provider; unknown domains fall back to editable fields prefilled
   with `smtp.<domain>`
 - changing the forwarding address is gated on notifying the outgoing address first
-- Home (master switch, permissions, Doze exemption, counters, needs-attention queue),
+- Home (master switch, permissions, counters, needs-attention queue),
   Rules, and Setup screens
 - failure notifications, switchable off in Setup — the failed message still shows under
   "Needs attention" either way

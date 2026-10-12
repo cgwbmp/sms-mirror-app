@@ -15,3 +15,6 @@ captures/
 # Debug key: regenerate with ./dev.sh setup. Release key: see DOCS.md → Releasing.
 .keystore/
 keystore.properties
+
+# Kotlin compiler session data
+.kotlin/
